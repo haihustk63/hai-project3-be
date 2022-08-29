@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const { Schema, model, Types } = mongoose;
 
+const ConfigSchema = new Schema({
+  minThreshold: Number,
+  desireThreshold: Number,
+});
+
 export const DeviceSchema = new Schema({
   personId: {
     required: true,
@@ -28,6 +33,7 @@ export const DeviceSchema = new Schema({
     type: Number,
     required: true,
   },
+  config: ConfigSchema,
 });
 
 export const DevicesModel = model("Devices", DeviceSchema);

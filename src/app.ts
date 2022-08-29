@@ -1,12 +1,12 @@
 import dotenv from "dotenv";
 import express, { Application } from "express";
 import { createServer } from "http";
-import { Server } from "socket.io";
 import { dbConnect } from "./config/db";
 import { initialSocker } from "./config/socket";
 import deviceRoute from "./routes/device";
 import ruleRoute from "./routes/rule";
 import userRoute from "./routes/user";
+import sensorRoute from "./routes/sensor";
 
 const app: Application = express();
 
@@ -21,6 +21,7 @@ app.use(express.json());
 app.use(userRoute);
 app.use(deviceRoute);
 app.use(ruleRoute);
+app.use(sensorRoute);
 
 const httpServer = createServer(app);
 
