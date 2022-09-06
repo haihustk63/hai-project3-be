@@ -1,8 +1,10 @@
 export const BASE_ROUTES = {
   DEVICE: "/devices",
-  UPDATE_DELETE_DEVICE: "/devices/:deviceId",
+  MODIFY_DEVICE: "/devices/:deviceId",
   RULE: "/rules",
-  UPDATE_DELETE_RULES: "/rules/:ruleId",
+  MODIFY_RULES: "/rules/:ruleId",
+  RULE_CONDITION: "/rules-condition",
+  MODIFY_RULE_CONDITION: "/rules-condition/:ruleId",
   USER: "/users",
   MODIFY_USER: "/users/:userId",
   LOGIN: "/users/login",

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { DEVICE_TYPES } from "../constants";
 import { DevicesModel } from "../models/Device";
 import { publish } from "../config/mqtt";
+import { conditionRulesMap } from "../cron";
 
 const getAllDeviceTypes = async (req: Request, res: Response) => {
   try {
@@ -71,7 +72,14 @@ const updateDeviceById = async (req: Request, res: Response) => {
         device.value = newValue;
         await device?.save();
         const payload = { port: device?.port, value: newValue };
+        console.log(payload);
         publish(payload);
+
+        const fnRuleList =
+          conditionRulesMap.get(
+            `${deviceId}-${newValue === 1 ? "on" : "off"}`
+          ) || [];
+        fnRuleList.forEach((fn: any) => fn.fnc());
       }
     }
 

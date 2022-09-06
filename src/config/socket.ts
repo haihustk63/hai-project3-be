@@ -18,8 +18,8 @@ const deviceValueChangeEmit = (deviceId: any, value: any) => {
   io.emit(SOCKET_CHANNELS.DEVICE_VALUE_CHANGE, { deviceId, value });
 };
 
-const newSensorValue = (deviceId: any, value: any) => {
-  io.emit(SOCKET_CHANNELS.SENSOR_VALUE, { deviceId, value });
+const newSensorValue = (data: any) => {
+  io.emit(SOCKET_CHANNELS.SENSOR_VALUE, data);
 };
 
 export { initialSocker, io, deviceValueChangeEmit, newSensorValue };

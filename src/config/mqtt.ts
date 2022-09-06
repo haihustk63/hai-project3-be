@@ -1,4 +1,7 @@
 import mqtt from "mqtt";
+import { DevicesModel } from "../models/Device";
+import { SensorModel } from "../models/Sensor";
+import { newSensorValue } from "./socket";
 
 const TOPIC_PUB = "haipham/devices/sub";
 const TOPIC_SUB = "haipham/devices/pub";
@@ -17,8 +20,22 @@ mqttClient.on("connect", () => {
   });
 });
 
-mqttClient.on("message", (topic, payload) => {
-  console.log(topic, ":", payload.toString());
+mqttClient.on("message", async (topic, payload) => {
+  const data = JSON.parse(payload.toString());
+  const { percent, sensorId, pumpId, pumpValue } = data;
+  console.log(data);
+  newSensorValue(data);
+  if (pumpId) {
+    const pump = (await DevicesModel.findOne({ _id: pumpId })) as any;
+    pump.value = Number(pumpValue);
+    await pump.save();
+  }
+  if (sensorId) {
+    const sensor = (await DevicesModel.findOne({ _id: sensorId })) as any;
+    sensor.value = Number(percent);
+    await sensor.save();
+  }
+  await SensorModel.create({ deviceId: sensorId, value: percent });
 });
 
 const publish = ({

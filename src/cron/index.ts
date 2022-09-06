@@ -2,10 +2,11 @@ import { CronJob } from "cron";
 import { publish } from "../config/mqtt";
 import { deviceValueChangeEmit } from "../config/socket";
 import { DevicesModel } from "../models/Device";
-import { RuleModel } from "../models/Rule";
+import { RuleConditionModel, RuleModel } from "../models/Rule";
 
 // cron
 const jobMap = new Map();
+const conditionRulesMap = new Map();
 
 const handleJob = (rule: any) => async () => {
   const { port, value, deviceId } = rule;
@@ -17,9 +18,31 @@ const handleJob = (rule: any) => async () => {
   deviceValueChangeEmit(deviceId, value);
 };
 
+const handleRuleCondition = (rule: any) => async () => {
+  const { afterPort, afterValue, afterDeviceId } = rule;
+  publish({ port: afterPort, value: afterValue });
+
+  const afterDevice = (await DevicesModel.findOne({
+    _id: afterDeviceId,
+  })) as any;
+
+  afterDevice.value = afterValue;
+  await afterDevice.save();
+  deviceValueChangeEmit(afterDeviceId, afterValue);
+};
+
 const getAllRules = async () => {
   try {
     return await RuleModel.find();
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
+const getAllRulesCondition = async () => {
+  try {
+    return await RuleConditionModel.find();
   } catch (error) {
     console.log(error);
     return [];
@@ -46,22 +69,34 @@ const initialJob = async () => {
   }
 };
 
+const initialConditionRules = async () => {
+  const conditionRules = await getAllRulesCondition();
+  conditionRulesMap.clear();
+  if (conditionRules?.length) {
+    conditionRules?.map((rule: any) => {
+      const { preValue, preDeviceId } = rule;
+      if (preValue === 1) {
+        conditionRulesMap.set(`${preDeviceId}-on`, [
+          ...(conditionRulesMap.get(`${preDeviceId}-on`) || []),
+          { ruleId: rule._id, fnc: handleRuleCondition(rule) },
+        ]);
+      } else {
+        conditionRulesMap.set(`${preDeviceId}-off`, [
+          ...(conditionRulesMap.get(`${preDeviceId}-off`) || []),
+          { ruleId: rule._id, fnc: handleRuleCondition(rule) },
+        ]);
+      }
+    });
+  }
+};
+
+initialConditionRules();
 initialJob();
 
-// app.use("/stop-job/:jobId", (req, res, next) => {
-//   const { jobId } = req.params;
-//   const job = jobMap.get(jobId);
-//   if (job) {
-//     job.stop();
-//   }
-//   return res.status(200).send("OK");
-// });
-
-// app.post("/add-job", (req, res, next) => {
-//   const { time, deviceID, status } = req.body;
-//   const job = createNewJob({ time, deviceID, status });
-//   jobMap.set(deviceID, job);
-//   return res.status(200).send("OK");
-// });
-
-export { jobMap, createJob };
+export {
+  jobMap,
+  createJob,
+  conditionRulesMap,
+  handleRuleCondition,
+  initialConditionRules,
+};

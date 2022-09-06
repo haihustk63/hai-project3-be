@@ -26,6 +26,40 @@ const RuleSchema = new Schema({
   },
 });
 
-const RuleModel = model("Rule", RuleSchema);
+const RuleConditionSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  preDeviceId: {
+    required: true,
+    type: Types.ObjectId,
+    ref: "Devices",
+  },
+  prePort: {
+    required: true,
+    type: Number,
+  },
+  preValue: {
+    required: true,
+    type: Number,
+  },
+  afterDeviceId: {
+    required: true,
+    type: Types.ObjectId,
+    ref: "Devices",
+  },
+  afterPort: {
+    required: true,
+    type: Number,
+  },
+  afterValue: {
+    required: true,
+    type: Number,
+  },
+});
 
-export { RuleSchema, RuleModel };
+const RuleModel = model("Rule", RuleSchema);
+const RuleConditionModel = model("Rule Condition", RuleConditionSchema);
+
+export { RuleSchema, RuleModel, RuleConditionModel, RuleConditionSchema };

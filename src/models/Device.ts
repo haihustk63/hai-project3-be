@@ -33,6 +33,14 @@ export const DeviceSchema = new Schema({
     type: Number,
     required: true,
   },
+  floor: {
+    type: Number,
+    required: true,
+  },
+  room: {
+    type: Number,
+    required: true,
+  },
   config: ConfigSchema,
 });
 

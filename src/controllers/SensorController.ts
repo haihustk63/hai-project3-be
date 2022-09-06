@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { Types } from "mongoose";
 import { SensorModel } from "../models/Sensor";
 
 const getAllData = async (req: Request, res: Response) => {
