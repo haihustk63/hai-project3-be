@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import { DEVICE_TYPES } from "../constants";
 import { DevicesModel } from "../models/Device";
 import { publish } from "../config/mqtt";
@@ -25,8 +26,6 @@ const getAllDevices = async (req: Request, res: Response) => {
     return res.send(error);
   }
 };
-
-const getDeviceById = async () => {};
 
 const createDevice = async (req: Request, res: Response) => {
   try {

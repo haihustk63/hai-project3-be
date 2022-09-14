@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import { BASE_ROUTES } from "../constants";
 import { addData, getAllData } from "../controllers/SensorController";
 

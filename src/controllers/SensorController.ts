@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import { SensorModel } from "../models/Sensor";
 
 const getAllData = async (req: Request, res: Response) => {
