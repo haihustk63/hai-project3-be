@@ -92,24 +92,20 @@ const turnAllDevices = async (req: Request, res: Response) => {
   try {
     const { room } = req.params;
     const { value } = req.body;
-    console.log(room, value)
-    const devices = await DevicesModel.find({ room });
+    const devices = (await DevicesModel.find({ room })) || [];
 
-    if (devices?.length) {
-      const updateValueJob = devices.map(async (d: any) => {
-        if (d.type === DEVICE_TYPES[0].value) {
-          return new Promise((res, rej) => {
-            d.value = value;
-            const payload = { port: d.port, value };
-            publish(payload);
-          }).then(() => d.save());
-        } else return null;
-      });
+    const updateValueJob = devices.map(async (d: any) => {
+      if (d.type === DEVICE_TYPES[0].value) {
+        d.value = value;
+        await d.save();
+        const payload = { port: d.port, value };
+        publish(payload);
+      }
+    });
 
-      await Promise.all(updateValueJob);
-    }
+    await Promise.all(updateValueJob);
 
-    return res.status(200);
+    return res.status(200).send(devices);
   } catch (error) {
     return res.send(error);
   }
