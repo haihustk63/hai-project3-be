@@ -29,7 +29,6 @@ const getAllDevices = async (req: Request, res: Response) => {
 
 const createDevice = async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
     const { personId, name, type, interact, port, config } = req.body;
 
     const result = await DevicesModel.create({

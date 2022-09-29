@@ -24,6 +24,11 @@ const RuleSchema = new Schema({
     type: Types.ObjectId,
     ref: "Devices",
   },
+  personId: {
+    required: true,
+    type: Types.ObjectId,
+    ref: "User",
+  },
 });
 
 const RuleConditionSchema = new Schema({
@@ -56,6 +61,11 @@ const RuleConditionSchema = new Schema({
   afterValue: {
     required: true,
     type: Number,
+  },
+  personId: {
+    required: true,
+    type: Types.ObjectId,
+    ref: "User",
   },
 });
 

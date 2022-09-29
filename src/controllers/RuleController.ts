@@ -50,7 +50,9 @@ const createRule = async (req: Request, res: Response) => {
 
 const getAllRules = async (req: Request, res: Response) => {
   try {
-    const rules = await RuleModel.find().populate("deviceId");
+    const { personId } = req.query;
+
+    const rules = await RuleModel.find({ personId }).populate("deviceId");
     const sortRuleByTimeCron = rules.sort(compareRuleTime);
     return res.status(200).send(sortRuleByTimeCron);
   } catch (error) {
@@ -75,7 +77,9 @@ const deleteRule = async (req: Request, res: Response) => {
 
 const getAllRulesCondition = async (req: Request, res: Response) => {
   try {
-    const rules = await RuleConditionModel.find().populate([
+    const { personId } = req.query;
+
+    const rules = await RuleConditionModel.find({ personId }).populate([
       "preDeviceId",
       "afterDeviceId",
     ]);

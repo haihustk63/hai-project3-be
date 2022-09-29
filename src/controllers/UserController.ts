@@ -14,14 +14,18 @@ const createNewUser = async (
 
     const saltRounds = 10;
 
+    const findUser = await UserModel.findOne({ email });
+    if (findUser?._id) {
+      throw new Error("Email Existed");
+    }
+
     bcrypt.hash(password, saltRounds, async (err, hashPassword) => {
       await UserModel.create({ email, password: hashPassword });
-      console.log(1111);
       return res.sendStatus(200);
     });
   } catch (error) {
     console.log(error);
-    return res.status(200).send(error);
+    return res.sendStatus(400);
   }
 };
 
