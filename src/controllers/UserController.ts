@@ -4,11 +4,17 @@ import bcrypt from "bcrypt";
 import { UserModel } from "../models/User";
 import jwt from "jsonwebtoken";
 
-const createNewUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await UserModel.find();
+    return res.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    return res.send(error);
+  }
+};
+
+const createNewUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -63,7 +69,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     { expiresIn: "1h" }
   );
 
-  return res.status(200).send({ token, id: user._id, email: user.email });
+  return res
+    .status(200)
+    .send({ token, id: user._id, email: user.email, role: user.role });
 };
 
-export { createNewUser, deleteUser, login };
+export { createNewUser, deleteUser, login, getAllUsers };

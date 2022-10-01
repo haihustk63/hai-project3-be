@@ -1,5 +1,6 @@
 export const BASE_ROUTES = {
   DEVICE: "/devices",
+  DEVICE_ADMIN: "/devices/admin",
   MODIFY_DEVICE: "/devices/:deviceId",
   DEVICE_ROOM: "/devices/room/:room",
   RULE: "/rules",

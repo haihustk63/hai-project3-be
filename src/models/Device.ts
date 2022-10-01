@@ -11,7 +11,7 @@ export const DeviceSchema = new Schema({
   personId: {
     required: true,
     type: Types.ObjectId,
-    ref: "User",
+    ref: "Users",
   },
   name: {
     required: true,

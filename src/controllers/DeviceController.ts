@@ -27,9 +27,21 @@ const getAllDevices = async (req: Request, res: Response) => {
   }
 };
 
+const getAllDevicesAdmin = async (req: Request, res: Response) => {
+  try {
+    const devices = await DevicesModel.find().populate(["personId"]);
+
+    return res.send(devices);
+  } catch (error) {
+    console.log(error);
+    return res.send(error);
+  }
+};
+
 const createDevice = async (req: Request, res: Response) => {
   try {
-    const { personId, name, type, interact, port, config } = req.body;
+    const { personId, name, type, interact, port, config, floor, room } =
+      req.body;
 
     const result = await DevicesModel.create({
       personId,
@@ -38,11 +50,12 @@ const createDevice = async (req: Request, res: Response) => {
       interact,
       port,
       config,
+      floor,
+      room,
     });
 
     return res.send(result);
   } catch (error) {
-    // console.log(error);
     return res.send(error);
   }
 };
@@ -110,10 +123,24 @@ const turnAllDevices = async (req: Request, res: Response) => {
   }
 };
 
+const deleteDevice = async (req: Request, res: Response) => {
+  try {
+    const { deviceId } = req.params;
+
+    const result = await DevicesModel.deleteOne({ _id: deviceId });
+
+    return res.send(result);
+  } catch (error) {
+    return res.send(error);
+  }
+};
+
 export {
   getAllDevices,
   createDevice,
   getAllDeviceTypes,
   updateDeviceById,
   turnAllDevices,
+  getAllDevicesAdmin,
+  deleteDevice,
 };
