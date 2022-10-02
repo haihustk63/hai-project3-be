@@ -1,3 +1,4 @@
+// import từ express và các module ngoài
 import { Request, Response } from "express";
 
 import { DEVICE_TYPES } from "../constants";
@@ -5,6 +6,7 @@ import { DevicesModel } from "../models/Device";
 import { publish } from "../config/mqtt";
 import { conditionRulesMap } from "../cron";
 
+// Hàm này sẽ xử lý yêu cầu lấy danh sách các loại thiết bị
 const getAllDeviceTypes = async (req: Request, res: Response) => {
   try {
     return res.send(DEVICE_TYPES);
@@ -14,6 +16,8 @@ const getAllDeviceTypes = async (req: Request, res: Response) => {
   }
 };
 
+// Hàm này sẽ xử lý yêu cầu lấy danh sách thiết bị thiết bị
+// ứng với từng user cụ thể
 const getAllDevices = async (req: Request, res: Response) => {
   try {
     const { personId } = req.query;
@@ -27,6 +31,8 @@ const getAllDevices = async (req: Request, res: Response) => {
   }
 };
 
+// Hàm này sẽ xử lý yêu cầu lấy danh sách các loại thiết bị
+// dành cho Admin
 const getAllDevicesAdmin = async (req: Request, res: Response) => {
   try {
     const devices = await DevicesModel.find().populate(["personId"]);
@@ -38,10 +44,10 @@ const getAllDevicesAdmin = async (req: Request, res: Response) => {
   }
 };
 
+// Hàm này sẽ xử lý yêu cầu tạo mới một thiết bị
 const createDevice = async (req: Request, res: Response) => {
   try {
-    const { personId, name, type, interact, port, config, floor, room } =
-      req.body;
+    const { personId, name, type, interact, port, config, floor, room } = req.body;
 
     const result = await DevicesModel.create({
       personId,
@@ -50,9 +56,11 @@ const createDevice = async (req: Request, res: Response) => {
       interact,
       port,
       config,
-      floor,
-      room,
+      floor, 
+      room
     });
+
+    console.log(result)
 
     return res.send(result);
   } catch (error) {
@@ -60,6 +68,14 @@ const createDevice = async (req: Request, res: Response) => {
   }
 };
 
+/* 
+Hàm này sẽ xử lý yêu cầu thay đổi trạng thái của thiết bị
+Tùy vào dạng data gửi đến mà có cách xử lý khác nhau
+--Nếu data có minThreshold và desireThreshold thì cập nhật trường config của thiết bị
+--Nếu không thì cập nhật trường value của thiết bị
+Các giá trị mới này cũng được publish lên MQTT Broker nhờ vào hàm publish, nhận vào một tham số
+chính là giá trị mới của thiết bị
+*/
 const updateDeviceById = async (req: Request, res: Response) => {
   try {
     const { deviceId } = req.params;
@@ -83,7 +99,6 @@ const updateDeviceById = async (req: Request, res: Response) => {
         device.value = newValue;
         await device?.save();
         const payload = { port: device?.port, value: newValue };
-        console.log(payload);
         publish(payload);
 
         const fnRuleList =
@@ -100,6 +115,12 @@ const updateDeviceById = async (req: Request, res: Response) => {
   }
 };
 
+/* 
+Hàm này xử lý yêu cầu bật tất cả các thiết bị là ánh sáng trong cùng một phòng
+Dựa vào thông tin room, nó lấy ra danh sách các thiết bị
+Ứng với mỗi thiết bị sẽ thay đổi trạng thái theo value, và publish một message lên MQTT Broker
+bằng hàm publish
+*/ 
 const turnAllDevices = async (req: Request, res: Response) => {
   try {
     const { room } = req.params;
@@ -123,6 +144,7 @@ const turnAllDevices = async (req: Request, res: Response) => {
   }
 };
 
+// Hàm này xử lý yêu cầu xóa một thiết bị theo id
 const deleteDevice = async (req: Request, res: Response) => {
   try {
     const { deviceId } = req.params;
@@ -142,5 +164,5 @@ export {
   updateDeviceById,
   turnAllDevices,
   getAllDevicesAdmin,
-  deleteDevice,
+  deleteDevice
 };

@@ -1,3 +1,5 @@
+// Định nghĩa các routes của ứng dụng
+// Phía client (app) sẽ gọi tới các routes này
 export const BASE_ROUTES = {
   DEVICE: "/devices",
   DEVICE_ADMIN: "/devices/admin",
@@ -15,6 +17,7 @@ export const BASE_ROUTES = {
   SENSOR_ADD_DATA: "/sensors",
 };
 
+// Định nghĩa các loại thiết bị trong hệ thống
 export const DEVICE_TYPES = [
   {
     label: "Light",

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import { SensorModel } from "../models/Sensor";
 
+// Hàm lấy tất cả data của thiết bị sensor đó
 const getAllData = async (req: Request, res: Response) => {
   try {
     const { deviceId } = req.params;
@@ -16,6 +17,7 @@ const getAllData = async (req: Request, res: Response) => {
   }
 };
 
+// Hàm thêm một bản ghi vào database
 const addData = async (req: Request, res: Response) => {
   try {
     const { deviceId, value } = req.body;

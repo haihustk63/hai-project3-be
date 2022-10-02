@@ -1,7 +1,10 @@
+// import thư viện mongoose
 import mongoose from "mongoose";
 
+// Lấy ra lớp Schema và phương thức model
 const { Schema, model, Types } = mongoose;
 
+//Tạo RuleSchema: Dành cho các luật theo thời gian
 const RuleSchema = new Schema({
   name: {
     required: true,
@@ -31,6 +34,7 @@ const RuleSchema = new Schema({
   },
 });
 
+//Tạo RuleConditionSchema: Dành cho các luật phụ thuộc
 const RuleConditionSchema = new Schema({
   name: {
     type: String,
@@ -69,7 +73,9 @@ const RuleConditionSchema = new Schema({
   },
 });
 
+// Tạo RuleModel và RuleConditionModel
 const RuleModel = model("Rule", RuleSchema);
 const RuleConditionModel = model("Rule Condition", RuleConditionSchema);
 
-export { RuleSchema, RuleModel, RuleConditionModel, RuleConditionSchema };
+// export các Model
+export { RuleModel, RuleConditionModel };
